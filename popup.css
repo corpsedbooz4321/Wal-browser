@@ -1,32 +1,33 @@
 /* Wal Browser Popup Styles*/
 
-:root{
-  --wal-background:
-  --wal-foreground:
-  --way-color0:
-  --way-color1:
-  --way-color2:
-  --way-color3:
-  --way-color4:
-  --way-color5:
-  --way-color6:
-  --way-color7:
-  --way-color8:
+:root {
+  --wal-background: #1e1e2e;
+  --wal-foreground: #cdd6f4;
+  --wal-color0: #45475a;
+  --wal-color1: #f38ba8;
+  --wal-color2: #a6e3a1;
+  --wal-color3: #f9e2af;
+  --wal-color4: #f5c2e7;
+  --wal-color5: #94e2d5;
+  --wal-color6: #bac2de;
+  --wal-color7: #585b70;
+  --wal-color8: #a6e3a1;
 }
 
-
 * {
-   margin: 0;
-   padding: 0;
-   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
   width: 420px;
   max-height: 600px;
   background-color: var(--wal-background);
-  color: var(--wal-foreground)
-  font-family: -apple-system, BlinkMacSystemFont, "segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--wal-foreground);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
   font-size: 13px;
   line-height: 1.5;
   overflow-y: auto;
