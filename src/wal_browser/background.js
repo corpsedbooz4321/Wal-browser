@@ -138,5 +138,32 @@ function startColorWatching() {
     } catch (error) {
       console.error("[Wal Browser] Error watching colors:", error);
     }
-  });
+  }, 5000); //every 5 secods
+}
+
+//stop watching for color chagnes
+
+async function stopColorWatching() {
+  if (colorWatchingInterval) {
+    clearInterval(colorWatchInterval);
+    colorWatchInterval = null;
+  }
+}
+
+//now apply colors to all open tabs
+//
+async function applyColorsToAllTabs() {
+  try {
+    const tabs = await chrome.tabs.query({});
+    for (const tab of tabs) {
+      chrome.tabs
+        .sendMessage(tab.id, {
+          action: "applyColors",
+          colors: currentColors,
+        })
+        .catch(() => {});
+    }
+  } catch (error) {
+    console.error("[Wal Browser] Error applying colors to tabs:", error);
+  }
 }
