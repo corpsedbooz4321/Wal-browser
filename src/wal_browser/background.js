@@ -1,5 +1,5 @@
 let currentColors = null;
-let colorWatchInterva = null;
+let colorWatchInterval = null;
 
 /**
  * initializet the extension when installed or browser startsWith
@@ -7,19 +7,20 @@ let colorWatchInterva = null;
 
 chrome.runtime.onInstalled.addListener(() => {
   console.log("[Wal browser] extension installed");
+  initializeExtension();
 });
 
 /**
  * listening the colrr chagne from content scripts
  */
 
-chrome.runtime.onMessage.addListener((request, sender, sendRequest) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "getColors") {
     sendResponse({ colors: currentColors });
   } else if (request.action === "updateColors") {
     updateColors(request.colors);
     sendResponse({ success: true });
-  } else if (request.aciton === "startWatching") {
+  } else if (request.action === "startWatching") {
     startColorWatching();
     sendResponse({ success: true });
   }
@@ -61,9 +62,9 @@ async function fetchPywalColors() {
   try {
     //i dont its my problem here but i ve found out that we can't
     //directly read files instead i am using a native messaging or fall back to default colors option
-    const detaultColors = getDefaultColors();
+    const defaultColors = getDefaultColors();
     currentColors = defaultColors;
-    await saveToChromeStorage(detaultColors);
+    await saveToChromeStorage(defaultColors);
     console.log("[Wal Browser] Using default colors");
   } catch (error) {
     console.error("[Wal Browser] Error fetchign pywal colors");
@@ -113,7 +114,7 @@ async function saveToChromeStorage(colors) {
   try {
     await chrome.storage.local.set({ walColors: colors });
   } catch (error) {
-    console.error("[Wal Browser] Colors updated:", newColors);
+    console.error("[Wal Browser] Colors updated:", error);
   }
 }
 
@@ -122,11 +123,11 @@ async function saveToChromeStorage(colors) {
 function startColorWatching() {
   if (colorWatchInterval) return; //already wathcing
 
-  colorWatchIterval = setInterval(async () => {
+  colorWatchInterval = setInterval(async () => {
     try {
       //in a real implemation this would wathc the pywal config file
       //for now it i ve set it to check if the colors have been chagned in storage
-      const data = await chrome.storage.loacl.get("walColors");
+      const data = await chrome.storage.local.get("walColors");
       if (
         data.walColors &&
         JSON.stringify(data.walColors) !== JSON.stringify(currentColors)
@@ -144,7 +145,7 @@ function startColorWatching() {
 //stop watching for color chagnes
 
 async function stopColorWatching() {
-  if (colorWatchingInterval) {
+  if (colorWatchInterval) {
     clearInterval(colorWatchInterval);
     colorWatchInterval = null;
   }
