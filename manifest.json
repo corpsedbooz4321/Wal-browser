@@ -12,7 +12,7 @@
   ],
   "action": {
     "default_title": "pywal-injector - for browsers",
-    "default_popup": "popup.html"
+    "default_popup": "src/wal_browser/ui/popup.html"
   },
   "content_scripts": [
     {
