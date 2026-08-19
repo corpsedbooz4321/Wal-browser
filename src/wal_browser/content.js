@@ -56,6 +56,11 @@ function generateThemeCSS(colors) {
       --wal-error: ${c.error};
       --wal-warning: ${c.warning};
       --wal-success: ${c.success};
+      /* Overriding*/
+      
+      --yt-spec-base-background: ${c.background} !important;
+      --yt-spec-general-background-a: ${c.background} !important;
+      --yt-spec-text-primary: ${c.foreground} !important; 
     }
     
     /* Browser UI Elements */

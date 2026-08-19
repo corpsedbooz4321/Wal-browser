@@ -8,10 +8,9 @@ let currentColors = null;
 /**
  * Initialize popup when DOM is ready
  */
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   loadColors();
   attachEventListeners();
-  checkStatus();
 });
 
 /**
@@ -19,10 +18,21 @@ document.addEventListener("DOMContentLoaded", async () => {
  */
 function loadColors() {
   chrome.runtime.sendMessage({ action: "getColors" }, (response) => {
+    if (chrome.runtime.lastError) {
+      updateStatus("Error");
+      console.error(
+        "[Wal Browser] Error fetching colors:",
+        chrome.runtime.lastError.message,
+      );
+      return;
+    }
+
     if (response && response.colors) {
       currentColors = response.colors;
       displayColors(response.colors);
       updateStatus("Active");
+    } else {
+      updateStatus("Initializing...");
     }
   });
 }
@@ -31,7 +41,19 @@ function loadColors() {
  * Display color swatches in the popup
  */
 function displayColors(colors) {
-  const swatchContainer = document.getElementById("colorSwatches");
+  // Support both ID variations to prevent null reference errors
+  const swatchContainer =
+    document.getElementById("colorSwatches") ||
+    document.getElementById("colorPallete") ||
+    document.getElementById("colorPalette");
+
+  if (!swatchContainer) {
+    console.error(
+      "[Wal Browser] Could not find swatch container element in DOM",
+    );
+    return;
+  }
+
   swatchContainer.innerHTML = "";
 
   const colorMap = [
@@ -42,10 +64,12 @@ function displayColors(colors) {
     { name: "Err", color: colors.error },
     { name: "Warn", color: colors.warning },
     { name: "Succ", color: colors.success },
-    { name: "Tab", color: colors.tabs.active_bg },
+    { name: "Tab", color: colors.tabs?.active_bg },
   ];
 
   colorMap.forEach((item) => {
+    if (!item.color) return;
+
     const swatch = document.createElement("div");
     swatch.className = "swatch";
     swatch.style.backgroundColor = item.color;
@@ -60,10 +84,15 @@ function displayColors(colors) {
  * Copy color to clipboard
  */
 function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    console.log("[Wal Browser] Copied to clipboard:", text);
-    // Optional: Show toast notification
-  });
+  if (!text) return;
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      console.log("[Wal Browser] Copied to clipboard:", text);
+    })
+    .catch((err) => {
+      console.error("[Wal Browser] Copy failed:", err);
+    });
 }
 
 /**
@@ -77,49 +106,28 @@ function updateStatus(status) {
 }
 
 /**
- * Check extension status
- */
-function checkStatus() {
-  chrome.runtime.sendMessage({ action: "getColors" }, (response) => {
-    if (chrome.runtime.lastError) {
-      updateStatus("Error");
-      console.error(
-        "[Wal Browser] Status check error:",
-        chrome.runtime.lastError,
-      );
-    } else if (response && response.colors) {
-      updateStatus("Active");
-    } else {
-      updateStatus("Initializing...");
-    }
-  });
-}
-
-/**
  * Attach event listeners to buttons
  */
 function attachEventListeners() {
-  // Refresh button
   const refreshBtn = document.getElementById("refreshBtn");
   if (refreshBtn) {
-    refreshBtn.addEventListener("click", async () => {
+    refreshBtn.addEventListener("click", () => {
       refreshBtn.disabled = true;
-      try {
-        // Send message to background to refresh colors
-        chrome.runtime.sendMessage({ action: "startWatching" }, () => {
-          loadColors();
-          setTimeout(() => {
-            refreshBtn.disabled = false;
-          }, 500);
-        });
-      } catch (error) {
-        console.error("[Wal Browser] Refresh error:", error);
-        refreshBtn.disabled = false;
-      }
+      chrome.runtime.sendMessage({ action: "startWatching" }, () => {
+        if (chrome.runtime.lastError) {
+          console.error(
+            "[Wal Browser] Refresh failed:",
+            chrome.runtime.lastError.message,
+          );
+        }
+        loadColors();
+        setTimeout(() => {
+          refreshBtn.disabled = false;
+        }, 500);
+      });
     });
   }
 
-  // Settings button
   const settingsBtn = document.getElementById("settingsBtn");
   if (settingsBtn) {
     settingsBtn.addEventListener("click", () => {
