@@ -10,6 +10,9 @@
   "host_permissions": [
     "<all_urls>"
   ],
+  "background": {
+    "service_worker": "src/wal_browser/background.js"
+  },
   "action": {
     "default_title": "pywal-injector - for browsers",
     "default_popup": "src/wal_browser/ui/popup.html"
