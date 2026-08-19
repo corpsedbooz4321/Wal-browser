@@ -167,3 +167,9 @@ async function applyColorsToAllTabs() {
     console.error("[Wal Browser] Error applying colors to tabs:", error);
   }
 }
+
+//finally cleaning up all the shii when the extension is disabled
+//
+chrome.runtime.onSuspend.addListener(() => {
+  stopColorWatching();
+});
