@@ -182,8 +182,18 @@ function generateThemeCSS(colors) {
   `;
 }
 
-function applyColors(colors) {
-  if (JSON.stringify(colors) === JSON.stringigy(appliedColors)) {
-    return;
-  }
+function observeDOMChanges() {
+  const observer = new MutationObserver((mutations) => {});
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    attributes: false,
+    characterData: false,
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
 }
