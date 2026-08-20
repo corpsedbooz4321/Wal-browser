@@ -76,8 +76,8 @@ async function fetchPywalColors() {
  */
 function getDefaultColors() {
   return {
-    background: "#1e1e1e",
-    foreground: "#e0e0e0",
+    background: "#120a21",
+    foreground: "#120a21",
     primary: "#0078d4",
     error: "#ff5252",
     warning: "#ffb300",
