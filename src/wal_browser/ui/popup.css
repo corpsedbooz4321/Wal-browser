@@ -126,28 +126,28 @@ body {
   margin-top: 4px;
 }
 
-.color-pallete {
+.color-palette {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
 }
 
-.color-swatch {
+.swatch {
   aspect-ratio: 1;
   border-radius: 6px;
   border: 2px solid var(--wal-color8);
   cursor: pointer;
-  transition: all o.2s ease;
+  transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
 }
 
-.color-swatch :hover {
+.swatch:hover {
   transform: scale(1.05);
   background-color: var(--wal-background);
 }
 
-.color-swatch laber {
+.swatch label {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -161,7 +161,7 @@ body {
   transition: opacity 0.2s ease;
 }
 
-.color-swatch:hover .color-swatch label {
+.swatch:hover label {
   opacity: 1;
 }
 
@@ -235,6 +235,6 @@ body {
   }
 }
 
-.color-pallete {
+.color-palette {
   animation: fadeIn 0.3s ease;
 }
