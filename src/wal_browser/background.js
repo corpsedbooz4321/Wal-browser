@@ -2,7 +2,7 @@ let currentColors = null;
 let colorWatchInterval = null;
 
 /**
- * initializet the extension when installed or browser startsWith
+ * Initialize the extension when installed or browser starts
  */
 
 chrome.runtime.onInstalled.addListener(() => {
@@ -11,7 +11,7 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 /**
- * listening the colrr chagne from content scripts
+ * Listen for color change from content scripts
  */
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -27,7 +27,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 /**
- * install colors and start start wathching
+ * Install colors and start watching
  */
 
 async function initializeExtension() {
@@ -40,7 +40,7 @@ async function initializeExtension() {
 }
 
 /**
- * load colors from chrome
+ * Load colors from Chrome storage
  */
 
 async function loadColorsFromStorage() {
@@ -72,13 +72,14 @@ async function fetchPywalColors() {
 }
 
 /**
- * Get default color scheme based on te currne system theme
+ * Get default color scheme based on the current system theme
  */
 function getDefaultColors() {
   return {
     background: "#120a21",
     foreground: "#120a21",
     primary: "#0078d4",
+    accent: "#8ab4f8",
     error: "#ff5252",
     warning: "#ffb300",
     success: "#50fa7b",
@@ -118,7 +119,7 @@ async function saveToChromeStorage(colors) {
   }
 }
 
-// start wathcing for color changes every 5 seg
+// Start watching for color changes every 5 seconds
 //
 function startColorWatching() {
   if (colorWatchInterval) return; //already wathcing
@@ -126,7 +127,7 @@ function startColorWatching() {
   colorWatchInterval = setInterval(async () => {
     try {
       //in a real implemation this would wathc the pywal config file
-      //for now it i ve set it to check if the colors have been chagned in storage
+      // For now this checks if the colors have been changed in storage
       const data = await chrome.storage.local.get("walColors");
       if (
         data.walColors &&
@@ -139,10 +140,10 @@ function startColorWatching() {
     } catch (error) {
       console.error("[Wal Browser] Error watching colors:", error);
     }
-  }, 5000); //every 5 secods
+  }, 5000); // Every 5 seconds
 }
 
-//stop watching for color chagnes
+// Stop watching for color changes
 
 async function stopColorWatching() {
   if (colorWatchInterval) {
@@ -151,8 +152,8 @@ async function stopColorWatching() {
   }
 }
 
-//now apply colors to all open tabs
-//
+// Apply colors to all open tabs
+
 async function applyColorsToAllTabs() {
   try {
     const tabs = await chrome.tabs.query({});
@@ -169,8 +170,5 @@ async function applyColorsToAllTabs() {
   }
 }
 
-//finally cleaning up all the shii when the extension is disabled
-//
-chrome.runtime.onSuspend.addListener(() => {
-  stopColorWatching();
-});
+// Note: Manifest V3 service workers are suspended/terminated without a cleanup hook.
+// Use chrome.runtime.onUninstalled for extension-level cleanup if needed.
